@@ -1,0 +1,15 @@
+{
+  "parameters": {
+    "budgetName"	: { "value": "testbudget2505" },
+    "amount"		: { "value":  "140" },
+    "timeGrain"		: { "value":  "Quarterly"  },
+    "startDate"		: { "value": "01-08-2020" },
+    "endDate"  		: { "value": "30-08-2020" },
+    "fristThreshold"	: { "value": "80" },
+    "secondThreshold"	: { "value": "100" },
+    "contactRoles"	: { "value": [ "Contributors" ] },
+    "contactGroups"	: { "value": [ "lnochili-hotmail-group" ]} 
+ 	}
+
+}
+
