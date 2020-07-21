@@ -34,10 +34,10 @@ jobs:
             resourceGroupId=`az group show -n ${{ env.resource_group_name }}  --query id`
             ## remove quotes in resourceGroupId 
             temp="${resourceGroupId%\"}"
-            echo $temp
             rgId="${temp#\"}"
+            echo $rgId
             ### update the environment variable with Resource Group ID
-            {{ env.resource_group_id  }}=$rgId
+            # {{ env.resource_group_id  }}=$rgId
             
             ### Create Azure AD service principal with Contributor role to the resource group
             spnName='${{env.resource_group_name }}_${{ env.project_name }}_spn'
