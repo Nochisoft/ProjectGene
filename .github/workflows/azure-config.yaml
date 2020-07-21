@@ -16,6 +16,7 @@ jobs:
       resource_group_name: "test-rg"  # update the image template name of your choice
       azure_region: "southIndia"
       resource_group_id: "test"
+      project_name: "project_xxx" 
 
     steps:
       - name: 'Checkout Github Action'
