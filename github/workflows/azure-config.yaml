@@ -1,0 +1,45 @@
+# https://help.github.com/en/actions 
+# Work flow using Azure CLI to create project environment on Azure
+
+
+name: Azure environment for project
+on:
+  push:
+    paths: 
+      [ .github/workflows/azure-config.yaml ]
+
+jobs:
+  create_rg:
+    name: Create Azure Resource Group 
+    runs-on: ubuntu-latest
+    env:
+      resource_group_name: "test-rg"  # update the image template name of your choice
+      azure_region: "southIndia"
+      resource_group_id: "test"
+
+    steps:
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@master
+      
+      - name: azure authentication
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create Azure ResourceGroup
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az group create -n ${{ env.resource_group_name }}  --location ${{ env.azure_region }}
+            resourceGroupId=`az group show -n $1 --query id`
+            ## remove quotes in resourceGroupId 
+            temp="${resourceGroupId%\"}"
+            echo $temp
+            rgId="${temp#\"}"
+            ### update the environment variable with Resource Group ID
+            {{ env.resource_group_id  }}=$rgId
+            
+            ### Create Azure AD service principal with Contributor role to the resource group
+            spnName='${{env.resource_group_name }}_${{ env.project_name }}_spn'
+            az ad sp create-for-rbac --name $spnName --role Contributor --scope $rgId > ./spn.json
+                        
