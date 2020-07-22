@@ -1,0 +1,67 @@
+# Taken from https://github.com/pierluigi/azure-quickstart-templates/blob/master/.github/workflows/main.yml
+
+# This workflow is a reference to start an Azure deployment based on an ARM template found in the repo.
+# Please note it uses a 3rd party action: https://github.com/whiteducksoftware/azure-arm-action-js
+# Example of successful run: https://github.com/pierluigi/azure-quickstart-templates/actions/runs/172725595
+
+name: Deploy to Azure
+
+on:
+  issues:
+    types: [labeled] # This will change! 
+
+jobs:
+  deploy:
+    if: contains(github.event.issue.labels.*.name, 'approved') # Check if there's an "approved" label attached to this
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@master
+      # This action takes care of tracking the deployment environments https://github.com/bobheadxi/deployments
+      # For more info, see GitHub Deployments API  https://developer.github.com/v3/repos/deployments/
+      - name: Start deployment
+        uses: bobheadxi/deployments@master
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: staging
+
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - uses: whiteducksoftware/azure-arm-action-js@v3
+        id: deploy
+        name: Deploy Azure template
+        with:
+          resourceGroupName: pierluigi-demos
+          templateLocation: ./101-webapp-linux-node/azuredeploy.json
+          #parameters: ./101-webapp-linux-node/azuredeploy.parameters.json
+      - run: echo ${{ steps.deploy.outputs.webAppName }}
+      - name: update deployment status
+        uses: bobheadxi/deployments@master
+        if: always()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          env_url: 'https://${{ steps.deploy.outputs.webAppName }}.azurewebsites.net'  
+      - uses: actions/github-script@0.3.0
+        if: always()
+        env:
+          JOB_STATUS: ${{job.status}} 
+          WEBAPP_NAME: ${{steps.deploy.outputs.webAppName}}
+        with:
+          github-token: ${{github.token}}
+          script: |
+            const body = `
+            ## Deployment Completed
+            The requested deployment has completed.
+
+            - Deployment Status: *${process.env.JOB_STATUS == 'success' ? '✅ Done' : `⚠️ ${process.env.JOB_STATUS}`}*
+            - Resource URL: https://${process.env.WEBAPP_NAME}.azurewebsites.net
+
+            [List Deployments](../deployments)
+            `;
+            github.issues.createComment({...context.issue, body })
