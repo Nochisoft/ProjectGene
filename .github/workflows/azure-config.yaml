@@ -43,4 +43,5 @@ jobs:
             ### Create Azure AD service principal with Contributor role to the resource group
             spnName='${{env.resource_group_name }}_${{ env.project_name }}_spn'
             az ad sp create-for-rbac --name $spnName --role Contributor --scope $rgId > ./spn.json
+            cat ./spn.json
                         
