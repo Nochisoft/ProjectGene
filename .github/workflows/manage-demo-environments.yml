@@ -1,0 +1,106 @@
+# This workflow is a starting point to integrate with the Azure SG/RG management logic
+# It currently starts the creation of a new Repository (based off a repository template) 
+# when a Project Card (e.g. Issue inside of a Project Board) is moved to the "In progress" column.
+# A "project" is referred to as a Demo Environment to remove confusion with GitHub's Project Boards
+# More info: https://github.com/lnochili/ProjectGene/issues/1
+
+name: Manage Demo Environments
+
+on:
+  project_card
+
+# TODO check secrets.ACTION_PAT
+
+env:
+  COL_TODO: 'To do'
+  COL_INPG: 'In progress'
+  COL_DONE: 'Done'
+jobs:
+  update-project:
+    if: github.event.action == 'moved'
+    runs-on: [ubuntu-latest]
+  
+    steps:
+      - uses: actions/github-script@v2
+        name: Create or Delete
+        # Ensure the card is an "issue" and not a "note"
+        if: contains(github.event.project_card.content_url, 'issues/')
+        with:
+          github-token: ${{secrets.ACTION_PAT}}
+          script: |
+            const {column_id, content_url } = context.payload.project_card;
+            // TODO Remove
+            // core.setOutput("column_id", column_id);
+            
+            let { data: { name } } = await github.projects.getColumn({
+              column_id,
+            });
+
+            let { data : { labels, body, state, title, number, user }} = await github.request(`GET ${content_url}`);
+      
+            // TODO Check for a specific label
+            
+            const { COL_TODO, COL_INPG, COL_DONE} = process.env;
+            switch (name) {
+              case COL_TODO:
+                console.log("New project requested");
+                break;
+              case COL_INPG:
+                console.log("Start new project");
+                // TODO create repository from the specified template found in the issue
+                const template_owner = 'pierluigi';
+                const template_repo = "simple-nodejs-app-template";
+                // Add random seed to repo name
+                const name =  `${template_repo}-${Math.random().toString(36).substring(7)}`;
+                console.log(`Attempting to create ${name} for ${user.login}`);
+
+                let res = await github.repos.createUsingTemplate({
+                  template_owner,
+                  template_repo,
+                  name,
+                  owner: user.login
+                });
+                
+                
+                if (res.status == 201) {
+                  // core.setOutput('new_repo_id', res.data.id);
+                  console.log("Done.");
+                  console.log("Creating issue");
+
+                  const comment_body = `
+              ## Created new project 
+              
+              The repository [${res.data.full_name}](${res.data.html_url}) has been created (using the template ${template_owner}/${template_repo}) and is now available.
+
+              ## Next steps
+              - [Invite users](${res.data.html_url}/settings/access)
+              - [Rename repo](${res.data.html_url}/settings)
+              
+              ----
+
+                  NEW_REPO_ID=${res.data.id}
+                  NEW_REPO_NAME=${res.data.full_name}
+                  `;
+
+                  const comment_res = github.issues.createComment({
+                    issue_number: number, 
+                    owner: user.login, 
+                    repo: context.repo.repo,
+                    body: comment_body
+                  });
+
+                  console.log(comment_res);
+
+                } else {
+                  console.error(`Could not create repo ${name} for ${user.login}`);
+                  // core.setFailed(`Could not create repo ${name} for ${user.login}`);
+                }
+                
+                break;
+              case COL_DONE:
+                console.log("Close project");
+                break;
+              default:
+                console.log(`Column ${name} not present. Skipping...`); 
+                break;
+            }
