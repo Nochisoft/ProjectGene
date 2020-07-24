@@ -52,6 +52,6 @@ jobs:
       - name: update permissions to the script
         run: chmod +x $GITHUB_WORKSPACE/src/create_json.sh
       - name: run the script
-        run: $GITHUB_WORKSPACE/src/create_json $GITHUB_WORKSPACE/spn.json   
+        run: $GITHUB_WORKSPACE/src/create_json.sh $GITHUB_WORKSPACE/spn.json   
       - name: show the file
         run: echo ./github-secret.json
