@@ -6,7 +6,7 @@ temp=`cat $1`
 appId=`echo $temp | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["appId"]'`
 password=`echo $temp | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["password"]'`
 ## Copy the template file and update it with the SPN credentials
-cp ./src/azure-access-template.json github-secret.json
+cp $GITHUB_WORKSPACE/src/azure-access-template.json github-secret.json
 sed -i -e "s/<subscriptionId>/$subscriptionId/g" github-secret.json
 sed -i -e "s/<tenantId>/$tenantId/g" github-secret.json
 sed -i -e "s/<clientId>/$appId/g" github-secret.json
