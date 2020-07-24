@@ -49,9 +49,9 @@ jobs:
 
       - name: Setup Python
         uses: actions/setup-python@v2
-      - name: Create Azure SPN Secret
-        with:
-          inlineScript: |
-            chmod +x ./create_json.sh
-            ./create_json spn.json   
-            echo github-secret.json
+      - name: update permissions to the script
+        run: chmod +x ./create_json.sh
+      - name: run the script
+        run: ./create_json spn.json   
+      - name: show the file
+        run: echo github-secret.json
