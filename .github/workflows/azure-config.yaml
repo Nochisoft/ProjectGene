@@ -50,8 +50,8 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
       - name: update permissions to the script
-        run: chmod +x ./src/create_json.sh
+        run: chmod +x $GITHUB_WORKSPACE/src/create_json.sh
       - name: run the script
-        run: ./src/create_json spn.json   
+        run: $GITHUB_WORKSPACE/src/create_json spn.json   
       - name: show the file
-        run: echo github-secret.json
+        run: echo ./github-secret.json
