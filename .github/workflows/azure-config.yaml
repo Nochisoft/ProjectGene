@@ -46,12 +46,12 @@ jobs:
             spnName='${{env.resource_group_name }}_${{ env.project_name }}_spn'
             az ad sp create-for-rbac --name $spnName --role Contributor --scope $rgId > ./spn.json
             cat ./spn.json
-
+#  Create the JSON file for Github secret
       - name: Setup Python
         uses: actions/setup-python@v2
       - name: update permissions to the script
-        run: chmod +x ./create_json.sh
+        run: chmod +x ./src/create_json.sh
       - name: run the script
-        run: ./create_json spn.json   
+        run: ./src/create_json spn.json   
       - name: show the file
         run: echo github-secret.json
