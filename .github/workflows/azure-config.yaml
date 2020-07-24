@@ -44,14 +44,14 @@ jobs:
             
             ### Create Azure AD service principal with Contributor role to the resource group
             spnName='${{env.resource_group_name }}_${{ env.project_name }}_spn'
-            az ad sp create-for-rbac --name $spnName --role Contributor --scope $rgId > ./spn.json
-            cat ./spn.json
+            az ad sp create-for-rbac --name $spnName --role Contributor --scope $rgId > $GITHUB_WORKSPACE/spn.json
+            cat $GITHUB_WORKSPACE/spn.json
 #  Create the JSON file for Github secret
       - name: Setup Python
         uses: actions/setup-python@v2
       - name: update permissions to the script
         run: chmod +x $GITHUB_WORKSPACE/src/create_json.sh
       - name: run the script
-        run: $GITHUB_WORKSPACE/src/create_json spn.json   
+        run: $GITHUB_WORKSPACE/src/create_json $GITHUB_WORKSPACE/spn.json   
       - name: show the file
         run: echo ./github-secret.json
