@@ -1,0 +1,33 @@
+name: Azure environment for project
+on:
+  push:
+    paths: 
+      [ .github/workflows/azure_delete_project.yaml ]
+
+jobs:
+  create_rg:
+    name: Create Azure Resource Group 
+    runs-on: ubuntu-latest
+    env:
+      resource_group_name: "test-rg" 
+      project_name: "project_xxx" 
+
+    steps:
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@master
+      
+      - name: azure authentication
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Create Azure ResourceGroup
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+        
+          #account details in json format
+          accjson=$(az account show)
+          spn_name='${{env.resource_group_name }}_${{ env.project_name }}_spn'
+          # clean up - remove spn and resource group
+          az ad sp delete --id $spn_name
+          az group delete --name ${{env.resource_group_name }} --yes --no-wait
