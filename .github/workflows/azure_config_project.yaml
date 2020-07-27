@@ -27,10 +27,10 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            accjson=$(az account show)
             #apt upgrade jq
+            
             #account details in json format
-
+            accjson=$(az account show)
             #resource group details in json format
             rgjson=$(az group create --name ${{env.resource_group_name}} --location ${{ env.azure_region }})
 
