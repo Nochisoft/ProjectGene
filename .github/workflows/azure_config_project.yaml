@@ -11,9 +11,9 @@ jobs:
     name: Create Azure Resource Group 
     runs-on: ubuntu-latest
     env:
-      resource_group_name: "test-rg" 
+      resource_group_name: "projectRG" 
       azure_region: "southIndia"
-      project_name: "project_xxx" 
+      project_name: "projectName" 
 
     steps:
       - name: 'Checkout Github Action'
@@ -55,7 +55,7 @@ jobs:
             echo "$rgloc"
 
             # create the Service Principal
-            spn_name='${{env.resource_group_name }}_${{ env.project_name }}_spn'
+            spn_name='${{ env.project_name }}SPN'
             spjson=$(az ad sp create-for-rbac --name $spn_name --role Contributor --scopes $rgid)
 
             # push the spn to Azure keyvault
