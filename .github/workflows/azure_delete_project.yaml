@@ -6,11 +6,11 @@ on:
 
 jobs:
   create_rg:
-    name: Create Azure Resource Group 
+    name: Delete Azure Resource Group and SPN
     runs-on: ubuntu-latest
     env:
-      resource_group_name: "test-rg" 
-      project_spn: "3ba010f3-64b5-47d9-956e-af633cedcc33"  
+      resource_group_name: "test3-rg" 
+      project_spn: "17467717-a934-4bf7-aea5-6208ef14a543"  
 
     steps:
       - name: 'Checkout Github Action'
