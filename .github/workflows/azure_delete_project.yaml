@@ -9,8 +9,8 @@ jobs:
     name: Delete Azure Resource Group and SPN
     runs-on: ubuntu-latest
     env:
-      resource_group_name: "test3-rg" 
-      project_name:  "project_xxx"
+      resource_group_name: "projectRG" 
+      project_name:  "projectName"
 
     steps:
       - name: 'Checkout Github Action'
@@ -24,7 +24,7 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            spn_name='${{env.resource_group_name }}_${{ env.project_name }}_spn'
+            spn_name='${{ env.project_name }}SPN'
             spjson=$(az keyvault secret show -n $spn_name --vault-name kv-projectgene)
 
             # retrive the spn from Azure keyvault
