@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: 'Checkout Github Action'
-        uses: actions/checkout@master
+        uses: actions/checkout@main
       
       - name: azure authentication
         uses: azure/login@v1
@@ -24,10 +24,10 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-        
-          #account details in json format
-          accjson=$(az account show)
-          spn_name='${{env.resource_group_name }}_${{ env.project_name }}_spn'
-          # clean up - remove spn and resource group
-          az ad sp delete --id $spn_name
-          az group delete --name ${{env.resource_group_name }} --yes --no-wait
+            
+            #account details in json format
+            accjson=$(az account show)
+            spn_name='${{env.resource_group_name }}_${{ env.project_name }}_spn'
+            # clean up - remove spn and resource group
+            az ad sp delete --id $spn_name
+            az group delete --name ${{env.resource_group_name }} --yes --no-wait
