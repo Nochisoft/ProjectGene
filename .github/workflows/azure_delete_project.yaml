@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       resource_group_name: "test3-rg" 
-      project_spn: "17467717-a934-4bf7-aea5-6208ef14a543"  
+      project_name:  "project_xxx"
 
     steps:
       - name: 'Checkout Github Action'
@@ -24,9 +24,14 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            
-            #account details in json format
-            accjson=$(az account show)
-            # clean up - remove spn and resource group
-            az ad sp delete --id ${{ env.project_spn }}
+            spn_name='${{env.resource_group_name }}_${{ env.project_name }}_spn'
+            spjson=$(az keyvault secret show -n $spn_name --vault-name kv-projectgene)
+
+            # retrive the spn from Azure keyvault
+            echo "$spjson"
+            spn=$(echo "$spjson" | jq '.value' -r | jq '.appId' -r)
+ 
+            # clean up - remove spn, resource group and the Keyvault Secret
             az group delete --name ${{env.resource_group_name }} --yes --no-wait
+            az ad sp delete --id "$spn"
+            az keyvault secret delete -n $spn_name --vault-name kv-projectgene
