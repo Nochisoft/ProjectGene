@@ -56,15 +56,16 @@ jobs:
 
             # create the Service Principal
             spn_name='${{env.resource_group_name }}_${{ env.project_name }}_spn'
-            spjson=$(az ad sp create-for-rbac --n $spn_name --role Contributor --scopes $rgid)
+            spjson=$(az ad sp create-for-rbac --name $spn_name --role Contributor --scopes $rgid)
 
-            # echo for debugging
+            # push the spn to Azure keyvault
             echo "$spjson"
+            az keyvault secret set -n $spn_name --vault-name kv-projectgene  --value "$spjson" --verbose
 
             # get the clientId and
-            clientId=$(echo "$spjson" | jq '.appId' -r)
-            clientSecret=$(echo "$spjson" | jq '.password' -r)
+            #clientId=$(echo "$spjson" | jq '.appId' -r)
+            #clientSecret=$(echo "$spjson" | jq '.password' -r)
 
             # echo for debugging
-            echo "$clientId"
-            echo "$clientSecret"
+            #echo "$clientId"
+            #echo "$clientSecret"
