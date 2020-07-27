@@ -4,7 +4,7 @@ name: Azure environment for project
 on:
   push:
     paths: 
-      [ .github/workflows/azure_config_1.yaml ]
+      [ .github/workflows/azure_config_project.yaml ]
 
 jobs:
   create_rg:
