@@ -1,6 +1,6 @@
 # Work flow using Azure CLI to create project environment on Azure
 
-name: Azure environment for project
+name: Create Azure environment for project
 on:
   push:
     paths: 
@@ -27,43 +27,44 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-          #apt upgrade jq
-          #account details in json format
-          accjson=$(az account show)
-          #resource group details in json format
-          rgjson=$(az group create --name ${{env.resource_group_name}} --location ${{ env.azure_region }})
+            accjson=$(az account show)
+            #apt upgrade jq
+            #account details in json format
 
-          # echo for debugging
-          echo "$accjson"
-          echo "$rgjson"
+            #resource group details in json format
+            rgjson=$(az group create --name ${{env.resource_group_name}} --location ${{ env.azure_region }})
 
-          # get the subscription ID
-          subscriptionId=$(echo "$accjson" | jq '.id')
-          tenantId=$(echo "$accjson" | jq '.tenantId')
+            # echo for debugging
+            echo "$accjson"
+            echo "$rgjson"
 
-          # echo for debugging
-          echo "$subscriptionId"
-          echo "$tenantId"
+            # get the subscription ID
+            subscriptionId=$(echo "$accjson" | jq '.id')
+            tenantId=$(echo "$accjson" | jq '.tenantId')
 
-          # get the resource group id (remove the quotes - raw) and location
-          rgid=$(echo "$rgjson" | jq '.id' -r)
-          rgloc=$(echo "$rgjson" | jq '.location')
+            # echo for debugging
+            echo "$subscriptionId"
+            echo "$tenantId"
 
-          # echo for debugging
-          echo "$rgid"
-          echo "$rgloc"
+            # get the resource group id (remove the quotes - raw) and location
+            rgid=$(echo "$rgjson" | jq '.id' -r)
+            rgloc=$(echo "$rgjson" | jq '.location')
 
-          # create the Service Principal
-          spn_name='${{env.resource_group_name }}_${{ env.project_name }}_spn'
-          spjson=$(az ad sp create-for-rbac --n $spn_name --role Contributor --scopes $rgid)
+            # echo for debugging
+            echo "$rgid"
+            echo "$rgloc"
 
-          # echo for debugging
-          echo "$spjson"
+            # create the Service Principal
+            spn_name='${{env.resource_group_name }}_${{ env.project_name }}_spn'
+            spjson=$(az ad sp create-for-rbac --n $spn_name --role Contributor --scopes $rgid)
 
-          # get the clientId and
-          clientId=$(echo "$spjson" | jq '.appId' -r)
-          clientSecret=$(echo "$spjson" | jq '.password' -r)
+            # echo for debugging
+            echo "$spjson"
 
-          # echo for debugging
-          echo "$clientId"
-          echo "$clientSecret"
+            # get the clientId and
+            clientId=$(echo "$spjson" | jq '.appId' -r)
+            clientSecret=$(echo "$spjson" | jq '.password' -r)
+
+            # echo for debugging
+            echo "$clientId"
+            echo "$clientSecret"
