@@ -1,3 +1,5 @@
+# Work flow using Azure CLI to create project environment on Azure
+
 name: Azure environment for project
 on:
   push:
