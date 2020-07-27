@@ -1,0 +1,67 @@
+name: Azure environment for project
+on:
+  push:
+    paths: 
+      [ .github/workflows/azure-config-1.yaml ]
+
+jobs:
+  create_rg:
+    name: Create Azure Resource Group 
+    runs-on: ubuntu-latest
+    env:
+      resource_group_name: "test3-rg" 
+      azure_region: "southIndia"
+      project_name: "project_xxx" 
+
+    steps:
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@master
+      
+      - name: azure authentication
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Create Azure ResourceGroup
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+          #apt upgrade jq
+          #account details in json format
+          accjson=$(az account show)
+          #resource group details in json format
+          rgjson=$(az group create --name ${{env.resource_group_name}} --location ${{ env.azure_region }})
+
+          # echo for debugging
+          echo "$accjson"
+          echo "$rgjson"
+
+          # get the subscription ID
+          subscriptionId=$(echo "$accjson" | jq '.id')
+          tenantId=$(echo "$accjson" | jq '.tenantId')
+
+          # echo for debugging
+          echo "$subscriptionId"
+          echo "$tenantId"
+
+          # get the resource group id (remove the quotes - raw) and location
+          rgid=$(echo "$rgjson" | jq '.id' -r)
+          rgloc=$(echo "$rgjson" | jq '.location')
+
+          # echo for debugging
+          echo "$rgid"
+          echo "$rgloc"
+
+          # create the Service Principal
+          spn_name='${{env.resource_group_name }}_${{ env.project_name }}_spn'
+          spjson=$(az ad sp create-for-rbac --n $spn_name --role Contributor --scopes $rgid)
+
+          # echo for debugging
+          echo "$spjson"
+
+          # get the clientId and
+          clientId=$(echo "$spjson" | jq '.appId' -r)
+          clientSecret=$(echo "$spjson" | jq '.password' -r)
+
+          # echo for debugging
+          echo "$clientId"
+          echo "$clientSecret"
