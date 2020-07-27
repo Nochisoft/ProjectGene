@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       resource_group_name: "test-rg" 
-      project_name: "project_xxx" 
       project_spn: "3ba010f3-64b5-47d9-956e-af633cedcc33"  
 
     steps:
@@ -28,7 +27,6 @@ jobs:
             
             #account details in json format
             accjson=$(az account show)
-            spn_name='${{env.resource_group_name }}_${{ env.project_name }}_spn'
             # clean up - remove spn and resource group
-            az ad sp delete --id $spn_name
+            az ad sp delete --id ${{ env.project_spn }}
             az group delete --name ${{env.resource_group_name }} --yes --no-wait
