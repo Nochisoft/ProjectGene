@@ -48,8 +48,8 @@ jobs:
               case COL_INPG:
                 console.log("Start new project");
                 // TODO create repository from the specified template found in the issue
-                const template_owner = 'pierluigi';
-                const template_repo = "simple-nodejs-app-template";
+                const template_owner = 'nochisoft';
+                const template_repo = 'webapp-template';
                 // Add random seed to repo name
                 const name =  `${template_repo}-${Math.random().toString(36).substring(7)}`;
                 console.log(`Attempting to create ${name} for ${user.login}`);
