@@ -45,7 +45,8 @@ As an initial version, ProjectGene is capable of
    ```
  2. Import this repo i.e. projectGene repo into your GitHub project
  3. Run the github workflow projectgene_setup.yaml which does the following
-    ````    * Creates Project Boards with  'To do', 'In Progress' and 'Created' columns
+    ```
+        * Creates Project Boards with  'To do', 'In Progress' and 'Created' columns
         * Creates a template Repository under the organization with the required structure
         * Creates Azure resourcegroup with a specific Azur region as default region 
         * Creates Azure Keyvault and sets access policies to store project secrets to access azure
