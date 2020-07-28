@@ -30,7 +30,8 @@ As an initial version, ProjectGene is capable of
        * Create a Project under GitHub Organization 
        * Create a Project Access Token and update org level Secret with name ACTION_PAT
        * Create GitHub Secret with name AZURE_CREDENTIALS in the format 
-   ```   {
+   ```   
+       {
         "subscriptionId": <Azure-subscriptionId>,
         "tenantId": <tenantId>,
         "clientId": "<qppId>",
