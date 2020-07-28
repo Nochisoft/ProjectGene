@@ -37,14 +37,14 @@ jobs:
             });
             
             console.log(res.data);
-            const name = res.data.name;
+            const column_name = res.data.name;
 
             let { data : { labels, body, state, title, number, user }} = await github.request(`GET ${content_url}`);
       
             // TODO Check for a specific label
             
             const { COL_TODO, COL_INPG, COL_DONE} = process.env;
-            switch (name) {
+            switch (column_name) {
               case COL_TODO:
                 console.log("New project requested");
                 break;
