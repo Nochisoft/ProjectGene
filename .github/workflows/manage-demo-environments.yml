@@ -26,7 +26,7 @@ jobs:
         # Ensure the card is an "issue" and not a "note"
         if: contains(github.event.project_card.content_url, 'issues/')
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.ACTION_PAT }}
           script: |
             const {column_id, content_url } = context.payload.project_card;
             // TODO Remove
