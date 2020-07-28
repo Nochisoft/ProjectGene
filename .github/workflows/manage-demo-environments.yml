@@ -32,9 +32,12 @@ jobs:
             // TODO Remove
             // core.setOutput("column_id", column_id);
             
-            let { data: { name } } = await github.projects.getColumn({
+            const data = await github.projects.getColumn({
               column_id,
             });
+            
+            console.log(data);
+            const name = data.name;
 
             let { data : { labels, body, state, title, number, user }} = await github.request(`GET ${content_url}`);
       
