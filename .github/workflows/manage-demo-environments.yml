@@ -35,8 +35,6 @@ jobs:
             const res = await github.projects.getColumn({
               column_id,
             });
-            
-            console.log(res.data);
             const column_name = res.data.name;
 
             let { data : { labels, body, state, title, number, user }} = await github.request(`GET ${content_url}`);
@@ -54,13 +52,13 @@ jobs:
                 const template_owner = 'nochisoft';
                 const template_repo = 'webapp-template';
                 // Add random seed to repo name
-                const name =  `${template_repo}-${Math.random().toString(36).substring(7)}`;
-                console.log(`Attempting to create ${name} for ${user.login}`);
+                const repo_name = `${template_repo}-${Math.random().toString(36).substring(7)}`;
+                console.log(`Attempting to create ${repo_name} for ${user.login}`);
 
                 let res = await github.repos.createUsingTemplate({
                   template_owner,
                   template_repo,
-                  name,
+                  name: repo_name,
                   owner: user.login
                 });
                 
@@ -95,7 +93,7 @@ jobs:
                   console.log(comment_res);
 
                 } else {
-                  console.error(`Could not create repo ${name} for ${user.login}`);
+                  console.error(`Could not create repo ${repo_name} for ${user.login}`);
                   // core.setFailed(`Could not create repo ${name} for ${user.login}`);
                 }
                 
@@ -104,6 +102,6 @@ jobs:
                 console.log("Close project");
                 break;
               default:
-                console.log(`Column ${name} not present. Skipping...`); 
+                console.log(`Column ${column_name} not present. Skipping...`); 
                 break;
             }
