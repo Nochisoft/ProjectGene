@@ -127,7 +127,7 @@ jobs:
         id: azure
         with:
           inlineScript: |
-            resource_group_name=${{ steps.repo_crud.outputs.new_repo_full_name }} 
+            resource_group_name=${{ steps.repo_crud.outputs.new_repo_name }} 
             azure_region="southIndia"
             #account details in json format
             accjson=$(az account show)
