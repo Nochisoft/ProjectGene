@@ -116,5 +116,5 @@ jobs:
         with:
           github-token: ${{ secrets.ORG_SECRETS_PAT }}
           repository: Nochisoft/project-lalitha-o9f2pr
-          secret-name: test
+          secret-name: 'test 2'
           secret-value: testing
