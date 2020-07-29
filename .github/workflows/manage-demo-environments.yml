@@ -77,7 +77,8 @@ jobs:
                   });
                   
             
-                  core.setOutput('new_repo_name', repo_res.data.full_name);
+                  core.setOutput('new_repo_full_name', repo_res.data.full_name);
+                  core.setOutput('new_repo_name', repo_res.data.name);
                   
                   console.log("New repository created successfully. Posting details in an issue.");
                   // TODO extract issue posting to separate step, so that we can use the GITHUB_TOKEN 
@@ -106,7 +107,7 @@ jobs:
                   });
 
                 } else {
-                  console.error(`Could not create repo ${new_repo_name} for ${ORG_NAME}`);
+                  console.error(`Could not create repo ${new_repo_full_name}`);
                 }
                 
                 break;
@@ -193,6 +194,6 @@ jobs:
         uses: pierluigi/repository-secret-javascript-action@main
         with:
           github-token: ${{ secrets.ORG_SECRETS_PAT }}
-          repository: ${{ steps.repo_crud.outputs.new_repo_name }}
+          repository: ${{ steps.repo_crud.outputs.new_repo_full_name }}
           secret-name: AZURE_CREDENTIALS
           secret-value: ${{ steps.azure.outputs.azure_credentials }}
