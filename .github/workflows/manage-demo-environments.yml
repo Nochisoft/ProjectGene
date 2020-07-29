@@ -112,7 +112,7 @@ jobs:
             }
       - name: Provision secret
         # if: success()
-        uses: Nochisoft/gh-secrets-action@master
+        uses: Nochisoft/gh-secrets-action@v2
         with:
           repository: Nochisoft/test-project-befsj
           token: ${{ secrets.ACTION_PAT }}
