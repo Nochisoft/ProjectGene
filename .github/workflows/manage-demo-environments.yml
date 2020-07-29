@@ -39,9 +39,7 @@ jobs:
 
             // Get issue details from the project card
             let { data : { labels, body, state, title, number, user }} = await github.request(`GET ${content_url}`);
-            
-            
-            
+                        
             switch (column_name) {
               case COL_TODO:
                 console.log("A new Issue was added to the Project board. Nothing to do here!");
@@ -51,7 +49,7 @@ jobs:
                 // TODO create repository from the specified template found in the issue
                 const template_repo = 'webapp-template';
 
-                const new_repo_name = `${template_repo}-${Math.random().toString(36).substring(7)}`;
+                const new_repo_name = `${title}-${Math.random().toString(36).substring(7)}`;
                 console.log(`Attempting to create ${new_repo_name} for ${user.login}`);
 
                 let res = await github.repos.createUsingTemplate({
@@ -64,7 +62,9 @@ jobs:
                 
                 if (res.status == 201) {
                   console.log("New repository created successfully. Posting details in an issue.");
-
+                  // TODO extract issue posting to separate step, so that we can use the GITHUB_TOKEN 
+                  // and post the reply as GitHub-Actions user
+                  
                   const comment_body = `
               ## Created new project 
               
