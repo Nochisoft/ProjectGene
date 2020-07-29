@@ -13,7 +13,7 @@ jobs:
     env:
       resource_group_name: "projectRG" 
       azure_region: "southIndia"
-      project_name: "projectfff" 
+      project_name: "projectggg" 
 
     steps:
       - name: 'Checkout Github Action'
@@ -91,8 +91,7 @@ jobs:
                 '. | .[$key0]=$value0 | .[$key1]=$value1 | .[$key2]=$value2 | .[$key3]=$value3 | .[$key4]=$value4 | .[$key5]=$value5 | .[$key6]=$value6 | .[$key7]=$value7 | .[$key8]=$value8 | .[$key9]=$value9'  <<<'{}')
                      
             # push the spn to Azure keyvault
-            #github_secret=$(echo $githubjson | base64)
-            echo $githubjson
-            az keyvault secret set -n $spn_name --vault-name kv-projectgene --encoding ascii --value "$githubjson" --verbose
-            
+            #echo $githubjson
+            az keyvault secret set -n $spn_name --vault-name kv-projectgene --encoding ascii --value "$githubjson" 
+             
 
