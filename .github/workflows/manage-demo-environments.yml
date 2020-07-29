@@ -15,6 +15,7 @@ env:
   COL_TODO: 'To do'
   COL_INPG: 'In Progress'
   COL_DONE: 'Created'
+  ORG_NAME: github.repository_owner
 jobs:
   update-project:
     if: github.event.action == 'moved'
@@ -22,44 +23,45 @@ jobs:
   
     steps:
       - uses: actions/github-script@v2
-        name: Create or Delete
-        # Ensure the card is an "issue" and not a "note"
+        name: Process request for Demo Environment
+        # This is to ensure the project card being moved is an "issue" and not a "note"
         if: contains(github.event.project_card.content_url, 'issues/')
         with:
           github-token: ${{ secrets.ACTION_PAT }}
           script: |
+            const { COL_TODO, COL_INPG, COL_DONE, ORG_NAME} = process.env;
+            console.log(ORG_NAME);
+            process.exit(1);
             const {column_id, content_url } = context.payload.project_card;
-            // TODO Remove
-            // core.setOutput("column_id", column_id);
-            
-            const res = await github.projects.getColumn({
+                    
+            // Retrieve column info
+            const { data: { column_name: name }}  = await github.projects.getColumn({
               column_id,
             });
-            const column_name = res.data.name;
 
+            // Get issue details from the project card
             let { data : { labels, body, state, title, number, user }} = await github.request(`GET ${content_url}`);
-      
-            // TODO Check for a specific label
             
-            const { COL_TODO, COL_INPG, COL_DONE} = process.env;
+            
+            
             switch (column_name) {
               case COL_TODO:
-                console.log("New project requested");
+                console.log("A new Issue was added to the Project board. Nothing to do here!");
                 break;
               case COL_INPG:
                 console.log("Start new project");
                 // TODO create repository from the specified template found in the issue
                 const template_owner = 'nochisoft';
                 const template_repo = 'webapp-template';
-                // Add random seed to repo name
-                const repo_name = `${template_repo}-${Math.random().toString(36).substring(7)}`;
-                console.log(`Attempting to create ${repo_name} for ${user.login}`);
+
+                const new_repo_name = `${template_repo}-${Math.random().toString(36).substring(7)}`;
+                console.log(`Attempting to create ${new_repo_name} for ${user.login}`);
 
                 let res = await github.repos.createUsingTemplate({
                   template_owner,
                   template_repo,
-                  name: repo_name,
-                  owner: user.login
+                  name: new_repo_name,
+                  owner: ORG_NAME
                 });
                 
                 
@@ -93,8 +95,7 @@ jobs:
                   console.log(comment_res);
 
                 } else {
-                  console.error(`Could not create repo ${repo_name} for ${user.login}`);
-                  // core.setFailed(`Could not create repo ${name} for ${user.login}`);
+                  console.error(`Could not create repo ${new_repo_name} for ${user.login}`);
                 }
                 
                 break;
