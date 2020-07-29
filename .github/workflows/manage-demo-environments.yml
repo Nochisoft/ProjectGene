@@ -23,9 +23,11 @@ jobs:
   
     steps:
       - uses: actions/github-script@v2
-        name: Process request for Demo Environment
+        name: Create or Delete Repository
         # This is to ensure the project card being moved is an "issue" and not a "note"
-        if: contains(github.event.project_card.content_url, 'issues/')
+        # TODO undo skipping
+        # if: contains(github.event.project_card.content_url, 'issues/')
+        if: ${{ false }}
         with:
           github-token: ${{ secrets.ACTION_PAT }}
           script: |
@@ -61,11 +63,14 @@ jobs:
                 
                 
                 if (repo_res.status == 201) {
+                  // Create default Project Board inside new repo
                   const new_project_res = github.projects.createForRepo({
                     owner: ORG_NAME,
                     repo: repo_res.data.name,
                     name: 'Project Board',
                   });
+                  
+            
                   
                   console.log("New repository created successfully. Posting details in an issue.");
                   // TODO extract issue posting to separate step, so that we can use the GITHUB_TOKEN 
@@ -105,3 +110,12 @@ jobs:
                 console.log(`Column ${column_name} not found in Project Board. Skipping...`); 
                 break;
             }
+      - name: Provision secret
+        # if: success()
+        uses: kornicameister/gh-secrets-action@master
+        with:
+          repository: Nochisoft/test-project-befsj
+          token: ${{ secrets.ACTION_PAT }}
+          secrets: |
+            verySecretPassword: secret
+            soSecretAccessKey: accessKey
