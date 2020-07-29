@@ -16,8 +16,6 @@ env:
   COL_INPG: 'In Progress'
   COL_DONE: 'Created'
   ORG_NAME: ${{ github.repository_owner }}
-  resource_group_name: "projectRG" 
-  azure_region: "southIndia"
 
 jobs:
   update-project:
@@ -129,12 +127,12 @@ jobs:
         id: azure
         with:
           inlineScript: |
-            #apt upgrade jq
-
+            resource_group_name=${{ steps.repo_crud.outputs.new_repo_full_name }} 
+            azure_region="southIndia"
             #account details in json format
             accjson=$(az account show)
             #resource group details in json format
-            rgjson=$(az group create --name ${{env.resource_group_name}} --location ${{ env.azure_region }})
+            rgjson=$(az group create --name  $resource_group_name --location azure_region )
             # echo for debugging
             echo "$accjson"
             echo "$rgjson"
@@ -151,7 +149,7 @@ jobs:
             echo "$rgid"
             echo "$rgloc"
             # create the Service Principal
-            spn_name='${{ steps.repo_crud.outputs.new_repo_name }}SPN'
+            spn_name=$resource_group_name"_spn"
             spjson=$(az ad sp create-for-rbac --name $spn_name --role Contributor --scopes $rgid)
             
             # get the clientId and
