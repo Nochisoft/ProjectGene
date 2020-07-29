@@ -16,12 +16,87 @@ env:
   COL_INPG: 'In Progress'
   COL_DONE: 'Created'
   ORG_NAME: ${{ github.repository_owner }}
+  resource_group_name: "projectRG" 
+  azure_region: "southIndia"
+  project_name: "projectggg" 
+
 jobs:
   update-project:
     if: github.event.action == 'moved'
     runs-on: [ubuntu-latest]
   
     steps:
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@main
+      - name: azure authentication
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Create Azure ResourceGroup
+        uses: azure/CLI@v1
+        id: azure
+        with:
+          inlineScript: |
+            #apt upgrade jq
+
+            #account details in json format
+            accjson=$(az account show)
+            #resource group details in json format
+            rgjson=$(az group create --name ${{env.resource_group_name}} --location ${{ env.azure_region }})
+            # echo for debugging
+            echo "$accjson"
+            echo "$rgjson"
+            # get the subscription ID
+            subscriptionId=$(echo "$accjson" | jq '.id')
+            tenantId=$(echo "$accjson" | jq '.tenantId')
+            # echo for debugging
+            echo "$subscriptionId"
+            echo "$tenantId"
+            # get the resource group id (remove the quotes - raw) and location
+            rgid=$(echo "$rgjson" | jq '.id' -r)
+            rgloc=$(echo "$rgjson" | jq '.location')
+            # echo for debugging
+            echo "$rgid"
+            echo "$rgloc"
+            # create the Service Principal
+            spn_name='${{ env.project_name }}SPN'
+            spjson=$(az ad sp create-for-rbac --name $spn_name --role Contributor --scopes $rgid)
+            
+            # get the clientId and
+            clientId=$(echo "$spjson" | jq '.appId' -r)
+            clientSecret=$(echo "$spjson" | jq '.password' -r)
+            
+            # echo for debugging
+            #echo "$clientId"
+            #echo "$clientSecret"
+            
+            
+            githubjson=$(jq --arg key0   'subscriptionId' \
+                --arg value0 $subscriptionId \
+                --arg key1   'tenantId' \
+                --arg value1 $tenantId \
+                --arg key2   'clientId' \
+                --arg value2 $clientId \
+                --arg key3   'clientSecret' \
+                --arg value3 $clientSecret \
+                --arg key4   'activeDirectoryEndpointUrl' \
+                --arg value4 'https://login.microsoftonline.com' \
+                --arg key5   'resourceManagerEndpointUrl' \
+                --arg value5 'https://management.azure.com/' \
+                --arg key6   'activeDirectoryGraphResourceId' \
+                --arg value6 'https://graph.windows.net/' \
+                --arg key7   'sqlManagementEndpointUrl' \
+                --arg value7 'https://management.core.windows.net:8443/' \
+                --arg key8   'galleryEndpointUrl' \
+                --arg value8 'https://gallery.azure.com/' \
+                --arg key9   'managementEndpointUrl' \
+                --arg value9 'https://management.core.windows.net/' \
+                '. | .[$key0]=$value0 | .[$key1]=$value1 | .[$key2]=$value2 | .[$key3]=$value3 | .[$key4]=$value4 | .[$key5]=$value5 | .[$key6]=$value6 | .[$key7]=$value7 | .[$key8]=$value8 | .[$key9]=$value9'  <<<'{}')
+                     
+            # push the spn to Azure keyvault
+            #echo $githubjson
+            echo "::set-output name=azure_credentials::$githubjson"
+            az keyvault secret set -n $spn_name --vault-name kv-projectgene --encoding ascii --value "$githubjson" 
       - uses: actions/github-script@v2
         name: Create or Delete Repository
         # This is to ensure the project card being moved is an "issue" and not a "note"
@@ -117,4 +192,4 @@ jobs:
           github-token: ${{ secrets.ORG_SECRETS_PAT }}
           repository: Nochisoft/project-lalitha-o9f2pr
           secret-name: AZURE_CREDENTIALS
-          secret-value: TODO
+          secret-value: ${{ steps.azure.outputs.azure_credentials }}
