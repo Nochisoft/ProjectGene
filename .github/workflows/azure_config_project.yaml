@@ -90,8 +90,8 @@ jobs:
                 --arg key8   'galleryEndpointUrl' \
                 --arg value8 'https://gallery.azure.com/' \
                 --arg key9   'managementEndpointUrl' \
-                --arg value9 'https://management.core.windows.net/' '. | .[$key0]=$value0 | .[$key1]=$value1 | .[$key2]=$value2 | .[$key3]=$value3| .[$key4]=$value4| \
-                     .[$key5]=$value5| .[$key6]=$value6| .[$key7]=$value7| .[$key8]=$value8| .[$key9]=$value9'  <<<'{}')
+                --arg value9 'https://management.core.windows.net/' \
+                '. | .[$key0]=$value0 | .[$key1]=$value1 | .[$key2]=$value2 | .[$key3]=$value3 | .[$key4]=$value4 | .[$key5]=$value5 | .[$key6]=$value6 | .[$key7]=$value7 | .[$key8]=$value8 | .[$key9]=$value9'  <<<'{}')
                      
             # push the spn to Azure keyvault
             echo "$githubjson"
