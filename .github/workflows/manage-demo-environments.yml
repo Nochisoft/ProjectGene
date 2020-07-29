@@ -68,7 +68,7 @@ jobs:
                   const comment_body = `
               ## Created new project 
               
-              The repository [${res.data.full_name}](${res.data.html_url}) has been created (using the template ${template_owner}/${template_repo}) and is now available.
+              The repository [${res.data.full_name}](${res.data.html_url}) has been created (using the template ${ORG_NAME}/${template_repo}) and is now available.
 
               ## Next steps
               - [Invite users](${res.data.html_url}/settings/access)
@@ -88,7 +88,7 @@ jobs:
                   });
 
                 } else {
-                  console.error(`Could not create repo ${new_repo_name} for ${user.login}`);
+                  console.error(`Could not create repo ${new_repo_name} for ${ORG_NAME}`);
                 }
                 
                 break;
@@ -96,6 +96,6 @@ jobs:
                 console.log("Close project");
                 break;
               default:
-                console.log(`Column ${column_name} not present. Skipping...`); 
+                console.log(`Column ${column_name} not found in Project Board. Skipping...`); 
                 break;
             }
