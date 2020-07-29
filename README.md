@@ -29,12 +29,12 @@ As an initial version, ProjectGene is capable of
   1. Configure ProjectGene:
        * Create a Project under GitHub Organization 
        * Create a Project Access Token and update org level Secret with name ACTION_PAT
-       * Create GitHub Secret with name AZURE_CREDENTIALS in the format 
+       * Create GitHub Secret with name AZURE_CREDENTIALS in the format below filled with details of SPN
    ```   
        {
         "subscriptionId": <Azure-subscriptionId>,
         "tenantId": <tenantId>,
-        "clientId": "<qppId>",
+        "clientId": "<appId>",
         "clientSecret": "<password>",
         "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
         "resourceManagerEndpointUrl": "https://management.azure.com/",
@@ -53,7 +53,7 @@ As an initial version, ProjectGene is capable of
         * Creates Azure Keyvault and sets access policies to store project secrets to access azure
   ```
   #### Create a new Project
-  * Create a issue in the project 
+  * Create an issue in the project 
   * move the issue across the columns in Boards
   * When the issue moves to "In Progress" column, the Github workflow to create a new project starts and updates the result
  
