@@ -33,7 +33,7 @@ jobs:
             const {column_id, content_url } = context.payload.project_card;
                     
             // Retrieve column info
-            const { data: { column_name: name }}  = await github.projects.getColumn({
+            const { data: { name: column_name }}  = await github.projects.getColumn({
               column_id,
             });
 
