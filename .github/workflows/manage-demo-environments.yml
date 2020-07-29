@@ -112,10 +112,8 @@ jobs:
             }
       - name: Provision secret
         # if: success()
-        uses: Nochisoft/gh-secrets-action@master
+        uses: pierluigi/repository-secret-javascript-action@master
         with:
-          repository: Nochisoft/test-project-befsj
           token: ${{ secrets.ACTION_PAT }}
-          secrets: |
-            verySecretPassword: secret
-            soSecretAccessKey: accessKey
+          owner: Nichisoft
+          value: "just a secret"
