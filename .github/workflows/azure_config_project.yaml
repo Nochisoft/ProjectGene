@@ -92,6 +92,7 @@ jobs:
                      
             # push the spn to Azure keyvault
             github_secret=$(echo $githubjson | base64)
+            echo $github_secret
             az keyvault secret set -n $spn_name --vault-name kv-projectgene  --value "$github_secret" --verbose
             
 
