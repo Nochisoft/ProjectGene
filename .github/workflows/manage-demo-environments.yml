@@ -132,7 +132,7 @@ jobs:
             #account details in json format
             accjson=$(az account show)
             #resource group details in json format
-            rgjson=$(az group create --name  $resource_group_name --location azure_region )
+            rgjson=$(az group create --name  $resource_group_name --location $azure_region )
             # echo for debugging
             echo "$accjson"
             echo "$rgjson"
