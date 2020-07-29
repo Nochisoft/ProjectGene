@@ -98,11 +98,12 @@ jobs:
             echo "::set-output name=azure_credentials::$githubjson"
             az keyvault secret set -n $spn_name --vault-name kv-projectgene --encoding ascii --value "$githubjson" 
       - uses: actions/github-script@v2
+        id: repo_crud
         name: Create or Delete Repository
         # This is to ensure the project card being moved is an "issue" and not a "note"
         # TODO undo skipping
-        # if: contains(github.event.project_card.content_url, 'issues/')
-        if: ${{ false }}
+        if: contains(github.event.project_card.content_url, 'issues/')
+        # if: ${{ false }}
         with:
           github-token: ${{ secrets.ACTION_PAT }}
           script: |
@@ -146,6 +147,7 @@ jobs:
                   });
                   
             
+                  core.setOutput('new_repo_name', repo_res.data.full_name);
                   
                   console.log("New repository created successfully. Posting details in an issue.");
                   // TODO extract issue posting to separate step, so that we can use the GITHUB_TOKEN 
@@ -190,6 +192,6 @@ jobs:
         uses: pierluigi/repository-secret-javascript-action@main
         with:
           github-token: ${{ secrets.ORG_SECRETS_PAT }}
-          repository: Nochisoft/project-lalitha-o9f2pr
+          repository: ${{ steps.repo_crud.outputs.new_repo_name }}
           secret-name: AZURE_CREDENTIALS
           secret-value: ${{ steps.azure.outputs.azure_credentials }}
