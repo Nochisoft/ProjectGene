@@ -22,6 +22,8 @@ jobs:
     runs-on: [ubuntu-latest]
   
     steps:
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@main
       - uses: actions/github-script@v2
         name: Create or Delete Repository
         # This is to ensure the project card being moved is an "issue" and not a "note"
