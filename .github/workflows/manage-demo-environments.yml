@@ -112,7 +112,7 @@ jobs:
             }
       - name: Provision secret
         # if: success()
-        uses: pierluigi/repository-secret-javascript-action@master
+        uses: pierluigi/repository-secret-javascript-action@v1-alpha
         with:
           token: ${{ secrets.ACTION_PAT }}
           owner: Nichisoft
