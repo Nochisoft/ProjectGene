@@ -30,8 +30,6 @@ jobs:
           github-token: ${{ secrets.ACTION_PAT }}
           script: |
             const { COL_TODO, COL_INPG, COL_DONE, ORG_NAME} = process.env;
-            console.log(ORG_NAME);
-            process.exit(1);
             const {column_id, content_url } = context.payload.project_card;
                     
             // Retrieve column info
@@ -49,16 +47,15 @@ jobs:
                 console.log("A new Issue was added to the Project board. Nothing to do here!");
                 break;
               case COL_INPG:
-                console.log("Start new project");
+                console.log("A new request for a demo environment was approved. Initiating sequence...");
                 // TODO create repository from the specified template found in the issue
-                const template_owner = 'nochisoft';
                 const template_repo = 'webapp-template';
 
                 const new_repo_name = `${template_repo}-${Math.random().toString(36).substring(7)}`;
                 console.log(`Attempting to create ${new_repo_name} for ${user.login}`);
 
                 let res = await github.repos.createUsingTemplate({
-                  template_owner,
+                  template_owner: ORG_NAME,
                   template_repo,
                   name: new_repo_name,
                   owner: ORG_NAME
@@ -66,9 +63,7 @@ jobs:
                 
                 
                 if (res.status == 201) {
-                  // core.setOutput('new_repo_id', res.data.id);
-                  console.log("Done.");
-                  console.log("Creating issue");
+                  console.log("New repository created successfully. Posting details in an issue.");
 
                   const comment_body = `
               ## Created new project 
@@ -91,8 +86,6 @@ jobs:
                     repo: context.repo.repo,
                     body: comment_body
                   });
-
-                  console.log(comment_res);
 
                 } else {
                   console.error(`Could not create repo ${new_repo_name} for ${user.login}`);
