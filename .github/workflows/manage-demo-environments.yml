@@ -114,6 +114,6 @@ jobs:
         # if: success()
         uses: pierluigi/repository-secret-javascript-action@main
         with:
-          github-token: ${{ secrets.ACTION_PAT }}
+          token: ${{ secrets.ACTION_PAT }}
           owner: Nichisoft
           value: "just a secret"
