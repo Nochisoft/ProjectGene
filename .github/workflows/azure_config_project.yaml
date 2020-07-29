@@ -13,7 +13,7 @@ jobs:
     env:
       resource_group_name: "projectRG" 
       azure_region: "southIndia"
-      project_name: "projectzzz" 
+      project_name: "projectaaa" 
 
     steps:
       - name: 'Checkout Github Action'
