@@ -115,6 +115,6 @@ jobs:
         uses: pierluigi/repository-secret-javascript-action@main
         with:
           github-token: ${{ secrets.ORG_SECRETS_PAT }}
-          repository: "Nochisoft/project-lalitha-o9f2pr"
-          secret-name: "Secret via Action"
-          secret-value: "{dada: true}"
+          repository: Nochisoft/project-lalitha-o9f2pr
+          secret-name: 'Secret via Action'
+          secret-value: '{dada: true}'
