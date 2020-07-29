@@ -149,7 +149,7 @@ jobs:
             echo "$rgid"
             echo "$rgloc"
             # create the Service Principal
-            spn_name=$resource_group_name"_spn"
+            spn_name=$resource_group_name"-spn"
             spjson=$(az ad sp create-for-rbac --name $spn_name --role Contributor --scopes $rgid)
             
             # get the clientId and
@@ -186,7 +186,7 @@ jobs:
             # push the spn to Azure keyvault
             #echo $githubjson
             echo "::set-output name=azure_credentials::$githubjson"
-            az keyvault secret set -n $spn_name --vault-name kv-projectgene --encoding ascii --value "$githubjson" 
+            az keyvault secret set -n $spn_name --vault-name kv-projectgene  --value "$githubjson" 
       - name: Provision secret
         if: ${{ steps.repo_crud.outputs.new_repo_name }}
         uses: pierluigi/repository-secret-javascript-action@main
