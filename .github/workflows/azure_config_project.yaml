@@ -103,7 +103,7 @@ jobs:
         uses: pierluigi/repository-secret-javascript-action@main
         with:
           github-token: ${{ secrets.ORG_SECRETS_PAT }}
-          repository: ${{ steps.repo_crud.outputs.new_repo_full_name }}
+          repository: 'Nochisoft/hack-project-2020-lt04m'
           secret-name: AZURE_CREDENTIALS
           secret-value: ${{ env.projectspn }}
              
