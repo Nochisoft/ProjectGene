@@ -58,7 +58,7 @@ jobs:
 
             # create the Service Principal
             spn_name='${{ env.project_name }}SPN'
-            spjson=$(az ad sp create-for-rbac --name $spn_name --role Contributor --scopes $rgid)
+            spjson=$(az ad sp create-for-rbac --name $spn_name --role Contributor --scopes $rgid  --sdk-auth)
             
 
             # get the clientId and
@@ -93,9 +93,9 @@ jobs:
                 '. | .[$key0]=$value0 | .[$key1]=$value1 | .[$key2]=$value2 | .[$key3]=$value3 | .[$key4]=$value4 | .[$key5]=$value5 | .[$key6]=$value6 | .[$key7]=$value7 | .[$key8]=$value8 | .[$key9]=$value9'  <<<'{}')
                      
             # push the spn to Azure keyvault
-            #echo $githubjson
-            az keyvault secret set -n $spn_name --vault-name kv-projectgene --encoding ascii --value "$githubjson"
-            echo "::set-env name=projectspn::$githubjson"
+            echo $spjson
+            az keyvault secret set -n $spn_name --vault-name kv-projectgene --encoding ascii --value "$spjson"
+            echo "::set-env name=projectspn::$spjson"
         # push the spn details to the project as AZURE_CREDENTIALS
       - name: echo the spn 
         run: echo ${{ env.projectspn }}
