@@ -30,8 +30,8 @@ jobs:
         name: Create or Delete Repository
         # This is to ensure the project card being moved is an "issue" and not a "note"
         # TODO undo skipping
-        if: contains(github.event.project_card.content_url, 'issues/')
-        # if: ${{ false }}
+        #if: contains(github.event.project_card.content_url, 'issues/')
+        if: ${{ false }}
         with:
           github-token: ${{ secrets.ACTION_PAT }}
           script: |
@@ -117,37 +117,39 @@ jobs:
                 break;
             }
       - name: azure authentication
-        if: ${{ steps.repo_crud.outputs.new_repo_name }}
+        #if: ${{ steps.repo_crud.outputs.new_repo_name }}
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Create Azure ResourceGroup
-        if: ${{ steps.repo_crud.outputs.new_repo_name }}
+        #if: ${{ steps.repo_crud.outputs.new_repo_name }}
         uses: azure/CLI@v1
         id: azure
         with:
           inlineScript: |
-            resource_group_name=${{ steps.repo_crud.outputs.new_repo_name }} 
+            # TODO RESTORE THIS
+            # resource_group_name=${{ steps.repo_crud.outputs.new_repo_name }} 
+            resource_group_name=${{ github.run_id }}
             azure_region="southIndia"
             #account details in json format
             accjson=$(az account show)
-            #resource group details in json format
+            # resource group details in json format
             rgjson=$(az group create --name  $resource_group_name --location $azure_region )
             # echo for debugging
-            echo "$accjson"
-            echo "$rgjson"
+            # echo "$accjson"
+            # echo "$rgjson"
             # get the subscription ID
             subscriptionId=$(echo "$accjson" | jq '.id')
             tenantId=$(echo "$accjson" | jq '.tenantId')
             # echo for debugging
-            echo "$subscriptionId"
-            echo "$tenantId"
+            # echo "$subscriptionId"
+            # echo "$tenantId"
             # get the resource group id (remove the quotes - raw) and location
             rgid=$(echo "$rgjson" | jq '.id' -r)
             rgloc=$(echo "$rgjson" | jq '.location')
             # echo for debugging
-            echo "$rgid"
-            echo "$rgloc"
+            # echo "$rgid"
+            # echo "$rgloc"
             # create the Service Principal
             spn_name=$resource_group_name"-spn"
             spjson=$(az ad sp create-for-rbac --name $spn_name --role Contributor --scopes $rgid)
@@ -157,8 +159,8 @@ jobs:
             clientSecret=$(echo "$spjson" | jq '.password' -r)
             
             # echo for debugging
-            #echo "$clientId"
-            #echo "$clientSecret"
+            # echo "$clientId"
+            # echo "$clientSecret"
             
             
             githubjson=$(jq --arg key0   'subscriptionId' \
@@ -184,8 +186,11 @@ jobs:
                 '. | .[$key0]=$value0 | .[$key1]=$value1 | .[$key2]=$value2 | .[$key3]=$value3 | .[$key4]=$value4 | .[$key5]=$value5 | .[$key6]=$value6 | .[$key7]=$value7 | .[$key8]=$value8 | .[$key9]=$value9'  <<<'{}')
                      
             # push the spn to Azure keyvault
-            #echo $githubjson
-            echo "::set-output name=azure_credentials::$githubjson"
+            echo $githubjson
+            echo $githubjson | base64
+            encodedJson=$(echo -n $githubjson | base64)
+            echo $encodedJson
+            echo "::set-output name=azure_credentials::$encodedJson"
             az keyvault secret set -n $spn_name --vault-name kv-projectgene  --value "$githubjson" 
       - name: Provision secret
         if: ${{ steps.repo_crud.outputs.new_repo_name }}
