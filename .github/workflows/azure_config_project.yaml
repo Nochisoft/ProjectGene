@@ -11,9 +11,11 @@ jobs:
     name: Create Azure Resource Group 
     runs-on: ubuntu-latest
     env:
-      resource_group_name: "projectRG" 
+      resource_group_name: "hack-project-2020-lt04m" 
       azure_region: "southIndia"
-      project_name: "projectggg" 
+      project_name: "hack-project-2020-lt04m"
+      projectspn: "none"
+       
 
     steps:
       - name: 'Checkout Github Action'
@@ -92,6 +94,16 @@ jobs:
                      
             # push the spn to Azure keyvault
             #echo $githubjson
-            az keyvault secret set -n $spn_name --vault-name kv-projectgene --encoding ascii --value "$githubjson" 
+            echo "::set-env name=project_spn::"$githubjson"
+            ::set-env name=projectspn::"$githubjson"
+            az keyvault secret set -n $spn_name --vault-name kv-projectgene --encoding ascii --value "$githubjson"
+        # push the spn details to the project as AZURE_CREDENTIALS
+      - name: Provision secret
+        uses: pierluigi/repository-secret-javascript-action@main
+        with:
+          github-token: ${{ secrets.ORG_SECRETS_PAT }}
+          repository: ${{ steps.repo_crud.outputs.new_repo_full_name }}
+          secret-name: AZURE_CREDENTIALS
+          secret-value: ${{ env.projectspn }}
              
 
