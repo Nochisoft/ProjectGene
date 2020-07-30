@@ -117,25 +117,30 @@ jobs:
                     owner: user.login, 
                     repo: context.repo.repo,
                 });
-                  
-
-                if (comments_res.data.length > 0) {
-                  console.log("Last issue comment");
-                  const last_comment = comments_res.data.splice(-1, 1)[0];
-
-                  const repo_id_regex = /NEW_REPO_ID=([^" ]+)/gm;
-                  const repo_name_regex = /NEW_REPO_NAME=([^" ]+)/gm;
-
-                  console.log(
-                    "Repo ID",
-                    repo_id_regex.exec(last_comment.body)[1].trim()
-                  );
-                  console.log(
-                    "Repo name",
-                    repo_name_regex.exec(last_comment.body)[1].trim()
-                  );
-                }
                 
+                var found_repo_id;
+                var found_repo_name;
+                
+                try {
+                  if (comments_res.data.length > 0) {
+                    console.log("Last issue comment");
+                    const last_comment = comments_res.data.splice(-1, 1)[0];
+
+                    const repo_id_regex = /NEW_REPO_ID=([^" ]+)/gm;
+                    const repo_name_regex = /NEW_REPO_NAME=([^" ]+)/gm;
+
+                    found_repo_id = repo_id_regex.exec(last_comment.body)[1].trim();
+                    found_repo_name = repo_name_regex.exec(last_comment.body)[1].trim()
+
+                  }
+                } catch(error) {
+                  console.log("Couldn't find any repo info. Skipping...", error);
+                }
+                if (found_repo_id && found_repo_name) {
+                  
+                    console.log("Repo ID", found_repo_id);
+                    console.log("Repo name", found_repo_name);
+                }
                 break;
               default:
                 console.log(`Column ${column_name} not found in Project Board. Skipping...`); 
