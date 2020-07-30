@@ -164,7 +164,6 @@ jobs:
                 break;
             }
       - name: azure authentication
-        if: ${{ steps.repo_crud.outputs.new_repo_name || steps.repo_crud.outputs_found_repo_name }}
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
