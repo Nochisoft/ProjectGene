@@ -97,14 +97,16 @@ jobs:
             az keyvault secret set -n $spn_name --vault-name kv-projectgene --encoding ascii --value "$spjson"
             echo "::set-env name=projectspn::$spjson"
         # push the spn details to the project as AZURE_CREDENTIALS
-      - name: echo the spn 
-        run: echo ${{ env.projectspn }}
+      - name: save the spn 
+        run: echo ${{ env.projectspn }} > spn.txt
+      - name: show the file 
+        run: cat spn.txt
       - name: Provision secret
         uses: pierluigi/repository-secret-javascript-action@main
         with:
           github-token: ${{ secrets.ORG_SECRETS_PAT }}
           repository: 'Nochisoft/hack-project-2020-lt04m'
           secret-name: AZURE_CREDENTIALS
-          secret-value: ${{ env.projectspn }}
+          secret-value: '${{ env.projectspn }}'
              
 
