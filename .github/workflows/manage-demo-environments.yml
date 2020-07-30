@@ -123,7 +123,6 @@ jobs:
                 
                 try {
                   if (comments_res.data.length > 0) {
-                    console.log("Last issue comment");
                     const last_comment = comments_res.data.splice(-1, 1)[0];
 
                     const repo_id_regex = /NEW_REPO_ID=([^" ]+)/gm;
@@ -137,9 +136,15 @@ jobs:
                   console.log("Couldn't find any repo info. Skipping...", error);
                 }
                 if (found_repo_id && found_repo_name) {
-                  
-                    console.log("Repo ID", found_repo_id);
-                    console.log("Repo name", found_repo_name);
+                  console.log("Repo ID", found_repo_id);
+                  console.log("Repo name", found_repo_name);
+                  console.log("Archiving repo");
+                  const repo_update_res = await github.repos.update({
+                    owner: found_repo_name.split("/")[0],
+                    repo: found_repo_name.split("/")[1],
+                    archived: true
+                  });
+                  console.log(repo_update_res);
                 }
                 break;
               default:
