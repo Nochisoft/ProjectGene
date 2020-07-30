@@ -147,9 +147,10 @@ jobs:
                   });
                   
                   const close_issue_res = await github.issues.update({ 
-                    owner: found_repo_name.split("/")[0],
-                    repo: found_repo_name.split("/")[1],
-                    issue_number: number
+                    owner: user.login, 
+                    repo: context.repo.repo,
+                    issue_number: number,
+                    state: "closed"
                   });
 
                 }
