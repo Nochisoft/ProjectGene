@@ -107,6 +107,6 @@ jobs:
           github-token: ${{ secrets.ORG_SECRETS_PAT }}
           repository: 'Nochisoft/hack-project-2020-lt04m'
           secret-name: AZURE_CREDENTIALS
-          secret-value: '${{ env.projectspn }}'
+          secret-value: ${{ env.projectspn }}
              
 
