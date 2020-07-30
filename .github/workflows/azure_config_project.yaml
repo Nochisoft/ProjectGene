@@ -94,7 +94,7 @@ jobs:
                      
             # push the spn to Azure keyvault
             echo $spjson
-            az keyvault secret set -n $spn_name --vault-name kv-projectgene --encoding ascii --value "$spjson"
+            #az keyvault secret set -n $spn_name --vault-name kv-projectgene --encoding ascii --value "$spjson"
             echo "::set-env name=projectspn::$spjson"
         # push the spn details to the project as AZURE_CREDENTIALS
       - name: save the spn 
