@@ -97,7 +97,7 @@ jobs:
                   NEW_REPO_NAME=${repo_res.data.full_name}
                   `;
 
-                  const comment_res = github.issues.createComment({
+                  const comment_res = await github.issues.createComment({
                     issue_number: number, 
                     owner: user.login, 
                     repo: context.repo.repo,
@@ -112,7 +112,7 @@ jobs:
               case COL_DONE:
                 console.log("Close project");
                 
-                const comments_res = github.issues.listComments({
+                const comments_res = await github.issues.listComments({
                     issue_number: number, 
                     owner: user.login, 
                     repo: context.repo.repo,
