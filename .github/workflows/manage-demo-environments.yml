@@ -249,7 +249,10 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            spn_name='${{ steps.repo_crud.outputs.found_repo_name }}-spn'
+            spn_name=${{ steps.repo_crud.outputs.found_repo_name }}"-spn"
+            echo $spn_name;
+            echo ${{ steps.repo_crud.outputs.found_repo_name}}
+            
             spjson=$(az keyvault secret show -n $spn_name --vault-name kv-projectgene)
             # retrive the spn from Azure keyvault
             echo "$spjson"
