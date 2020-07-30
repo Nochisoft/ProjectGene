@@ -57,45 +57,31 @@ jobs:
             echo "$rgloc"
 
             # create the Service Principal
-            spn_name='${{ env.project_name }}nnnspn'
+            spn_name='${{ env.project_name }}aspn'
             spjson=$(az ad sp create-for-rbac --name $spn_name --role Contributor --scopes $rgid  --sdk-auth)
             
 
             # get the clientId and
-            clientId=$(echo "$spjson" | jq '.appId' -r)
-            clientSecret=$(echo "$spjson" | jq '.password' -r)
+            #clientId=$(echo "$spjson" | jq '.appId' -r)
+            #clientSecret=$(echo "$spjson" | jq '.password' -r)
             
             # echo for debugging
             #echo "$clientId"
             #echo "$clientSecret"
-            
-            
-            githubjson=$(jq --arg key0   'subscriptionId' \
-                --arg value0 $subscriptionId \
-                --arg key1   'tenantId' \
-                --arg value1 $tenantId \
-                --arg key2   'clientId' \
-                --arg value2 $clientId \
-                --arg key3   'clientSecret' \
-                --arg value3 $clientSecret \
-                --arg key4   'activeDirectoryEndpointUrl' \
-                --arg value4 'https://login.microsoftonline.com' \
-                --arg key5   'resourceManagerEndpointUrl' \
-                --arg value5 'https://management.azure.com/' \
-                --arg key6   'activeDirectoryGraphResourceId' \
-                --arg value6 'https://graph.windows.net/' \
-                --arg key7   'sqlManagementEndpointUrl' \
-                --arg value7 'https://management.core.windows.net:8443/' \
-                --arg key8   'galleryEndpointUrl' \
-                --arg value8 'https://gallery.azure.com/' \
-                --arg key9   'managementEndpointUrl' \
-                --arg value9 'https://management.core.windows.net/' \
-                '. | .[$key0]=$value0 | .[$key1]=$value1 | .[$key2]=$value2 | .[$key3]=$value3 | .[$key4]=$value4 | .[$key5]=$value5 | .[$key6]=$value6 | .[$key7]=$value7 | .[$key8]=$value8 | .[$key9]=$value9'  <<<'{}')
-                     
+                                 
             # push the spn to Azure keyvault
             echo $spjson
+            v1=$(echo "$spjson" | tr -d '\n\t')
+            v2=$(echo "$v1" | base64 -w0)
+            v3=$(echo "$v2" | base64 -d)
+            echo $v2
+            echo $v3
+            az keyvault secret set -n "$spn_name" --vault-name "kv-projectgene" --value "$v2"
+            gitkv=$(az keyvault secret show --name $spn_name --vault-name kv-projectgene --query value)
+            gitkvfin=$(echo "$gitkv" | tr -d '\"'| base64 -d)
+            echo $gitkvfin
             az keyvault secret set -n $spn_name --vault-name kv-projectgene --encoding ascii --value "$spjson"
-            echo "::set-env name=projectspn::$spjson"
+            echo "::set-env name=projectspn::$gitkv"
         # push the spn details to the project as AZURE_CREDENTIALS
       - name: save the spn 
         run: echo ${{ env.projectspn }} > spn.txt
@@ -107,5 +93,5 @@ jobs:
           github-token: ${{ secrets.ORG_SECRETS_PAT }}
           repository: 'Nochisoft/hack-project-2020-lt04m'
           secret-name: AZURE_CREDENTIALS
-          secret-value: '`echo ${{ env.projectspn }}`'             
+          secret-value: echo ${{ env.projectspn }}            
 
