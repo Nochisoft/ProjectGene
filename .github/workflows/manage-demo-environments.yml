@@ -118,10 +118,21 @@ jobs:
                     repo: context.repo.repo,
                 });
                   
-                console.log(comments_res);
+
                 if (comments_res.data.length > 0) {
                   console.log("Last issue comment");
-                  console.log(comments_res.data.splice(-1, 1));
+                  const last_comment = comments_res.data.splice(-1, 1);
+                  const repo_id_regex = /NEW_REPO_ID=([^" ]+)/gm;
+                  const repo_name_regex = /NEW_REPO_NAME=([^" ]+)/gm;
+
+                  console.log(
+                    "Repo ID",
+                    repo_id_regex.exec(last_comment.body)[1].trim()
+                  );
+                  console.log(
+                    "Repo name",
+                    repo_name_regex.exec(last_comment.body)[1].trim()
+                  );
                 }
                 
                 break;
