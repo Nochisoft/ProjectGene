@@ -57,7 +57,7 @@ jobs:
             echo "$rgloc"
 
             # create the Service Principal
-            spn_name='${{ env.project_name }}nnspn'
+            spn_name='${{ env.project_name }}nnnspn'
             spjson=$(az ad sp create-for-rbac --name $spn_name --role Contributor --scopes $rgid  --sdk-auth)
             
 
@@ -94,7 +94,7 @@ jobs:
                      
             # push the spn to Azure keyvault
             echo $spjson
-            #az keyvault secret set -n $spn_name --vault-name kv-projectgene --encoding ascii --value "$spjson"
+            az keyvault secret set -n $spn_name --vault-name kv-projectgene --encoding ascii --value "$spjson"
             echo "::set-env name=projectspn::$spjson"
         # push the spn details to the project as AZURE_CREDENTIALS
       - name: save the spn 
@@ -107,6 +107,5 @@ jobs:
           github-token: ${{ secrets.ORG_SECRETS_PAT }}
           repository: 'Nochisoft/hack-project-2020-lt04m'
           secret-name: AZURE_CREDENTIALS
-          secret-value: "${{ env.projectspn }}"
-             
+          secret-value: '`echo ${{ env.projectspn }}`'             
 
