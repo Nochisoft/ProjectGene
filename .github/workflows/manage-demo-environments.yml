@@ -111,6 +111,19 @@ jobs:
                 break;
               case COL_DONE:
                 console.log("Close project");
+                
+                const comments_res = github.issues.listComments({
+                    issue_number: number, 
+                    owner: user.login, 
+                    repo: context.repo.repo,
+                  });
+                  
+                console.log(comments_res);
+                if (comments_res.data.length > 0) {
+                  console.log("Last issue comment");
+                  console.log(comments_res.data.splice(-1, 1);
+                }
+                
                 break;
               default:
                 console.log(`Column ${column_name} not found in Project Board. Skipping...`); 
