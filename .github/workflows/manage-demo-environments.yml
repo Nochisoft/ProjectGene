@@ -118,7 +118,7 @@ jobs:
                     repo: context.repo.repo,
                 });
                   
-
+                console.log(comments_res);
                 if (comments_res.data.length > 0) {
                   console.log("Last issue comment");
                   const last_comment = comments_res.data.splice(-1, 1);
