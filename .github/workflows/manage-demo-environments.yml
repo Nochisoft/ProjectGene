@@ -138,6 +138,10 @@ jobs:
                 if (found_repo_id && found_repo_name) {
                   console.log("Repo ID", found_repo_id);
                   console.log("Repo name", found_repo_name);
+                  
+                  core.setOutput('found_repo_full_name', found_repo_name);
+                  core.setOutput('found_repo_name', found_repo_name.split("/")[1],);
+                  
                   console.log("Archiving repo and closing issue.");
                   // TODO fetch repo name from its ID in case the repo name was modified
                   const repo_update_res = await github.repos.update({
@@ -160,7 +164,7 @@ jobs:
                 break;
             }
       - name: azure authentication
-        if: ${{ steps.repo_crud.outputs.new_repo_name }}
+        if: ${{ steps.repo_crud.outputs.new_repo_name || steps.repo_crud.outputs_found_repo_name }}
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -241,3 +245,18 @@ jobs:
           repository: ${{ steps.repo_crud.outputs.new_repo_full_name }}
           secret-name: AZURE_CREDENTIALS
           secret-value: ${{ steps.azure.outputs.azure_credentials }}
+      - name: Delete Azure ResourceGroup
+        if: ${{ steps.repo_crud.outputs.found_repo_name }}
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            spn_name='${{ steps.repo_crud.outputs.found_repo_name }}-spn'
+            spjson=$(az keyvault secret show -n $spn_name --vault-name kv-projectgene)
+            # retrive the spn from Azure keyvault
+            echo "$spjson"
+            spn=$(echo "$spjson" | jq '.value' -r | jq '.appId' -r)
+ 
+            # clean up - remove spn, resource group and the Keyvault Secret
+            az group delete --name ${{ steps.repo_crud.outputs.found_repo_name }} --yes --no-wait
+            az ad sp delete --id "$spn"
+            az keyvault secret delete -n $spn_name --vault-name kv-projectgene
