@@ -138,13 +138,20 @@ jobs:
                 if (found_repo_id && found_repo_name) {
                   console.log("Repo ID", found_repo_id);
                   console.log("Repo name", found_repo_name);
-                  console.log("Archiving repo");
+                  console.log("Archiving repo and closing issue.");
+                  // TODO fetch repo name from its ID in case the repo name was modified
                   const repo_update_res = await github.repos.update({
                     owner: found_repo_name.split("/")[0],
                     repo: found_repo_name.split("/")[1],
                     archived: true
                   });
-                  console.log(repo_update_res);
+                  
+                  const close_issue_res = await github.issues.update({ 
+                    owner: found_repo_name.split("/")[0],
+                    repo: found_repo_name.split("/")[1],
+                    issue_number: number
+                  });
+
                 }
                 break;
               default:
