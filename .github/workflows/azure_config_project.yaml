@@ -72,14 +72,15 @@ jobs:
             # push the spn to Azure keyvault
             echo $spjson
             v1=$(echo "$spjson" | tr -d '\n\t')
-            v2=$(echo "$v1" | base64 -w0)
+            v2=$(echo $v1 | openssl base64 -A)
+            #v2=$(echo "$v1" | base64 -w0)
             v3=$(echo "$v2" | base64 -d)
             echo $v2
             echo $v3
             az keyvault secret set -n "$spn_name" --vault-name "kv-projectgene" --value "$v2"
             gitkv=$(az keyvault secret show --name $spn_name --vault-name kv-projectgene --query value)
-            #gitkvfin=$(echo "$gitkv" | tr -d '\"'| base64 -d)
-            gitkvfin=$(cat ./patterns.yml | openssl base64 -A)
+            gitkvfin=$(echo "$gitkv" | tr -d '\"'| base64 -d)
+            
             echo $gitkvfin
             az keyvault secret set -n $spn_name --vault-name kv-testrg --encoding ascii --value "$spjson" 
             echo "::set-env name=projectspn::$gitkv"
