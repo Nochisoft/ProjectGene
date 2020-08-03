@@ -227,9 +227,9 @@ jobs:
             
             # retrive the spn from Azure keyvault
             #echo "$spjson"
-            spn=$(echo "$spjson" | jq '.value' -r | jq '.clientId' -r)
+            spn=$(echo "$spnjson" | jq '.clientId' -r)
  
             # clean up - remove spn, resource group and the Keyvault Secret
             az group delete --name ${{ steps.repo_crud.outputs.found_repo_name }} --yes --no-wait
             az ad sp delete --id "$spn"
-            az keyvault secret delete -n $spn_name --vault-name kv-projectgene
+            az keyvault secret delete --name $spn_name --vault-name "kv-projectgene"
