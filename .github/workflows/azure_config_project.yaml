@@ -11,9 +11,9 @@ jobs:
     name: Create Azure Resource Group 
     runs-on: ubuntu-latest
     env:
-      resource_group_name: "test-rg" 
+      resource_group_name: "hack-project-2020-lt04m" 
       azure_region: "southIndia"
-      project_name: "test-prj"
+      project_name: "hack-project-2020-lt04m"
       projectspn: "none"
        
 
@@ -77,8 +77,8 @@ jobs:
             v3=$(echo "$v2" | base64 -d)
             echo $v2
             echo $v3
-            az keyvault secret set -n "$spn_name" --vault-name "kv-testrg"  --value "$v2"
-            gitkv=$(az keyvault secret show --name "$spn_name" --vault-name "kv-testrg" --query value)
+            az keyvault secret set -n $spn_name --vault-name "kv-projectgene"  --value "$v2"
+            gitkv=$(az keyvault secret show --name $spn_name --vault-name "kv-projectgene" --query value)
             gitkvfin=$(echo "$gitkv" | tr -d '\"'| base64 -d)
             
             echo $gitkvfin
