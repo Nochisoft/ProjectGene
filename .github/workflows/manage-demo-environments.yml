@@ -179,46 +179,31 @@ jobs:
             accjson=$(az account show)
             # resource group details in json format
             rgjson=$(az group create --name  $resource_group_name --location $azure_region )
-            # echo for debugging
-            # echo "$accjson"
-            # echo "$rgjson"
+ 
             # get the subscription ID
             #subscriptionId=$(echo "$accjson" | jq '.id')
             #tenantId=$(echo "$accjson" | jq '.tenantId')
-            # echo for debugging
-            # echo "$subscriptionId"
-            # echo "$tenantId"
+ 
             # get the resource group id (remove the quotes - raw) and location
             rgid=$(echo "$rgjson" | jq '.id' -r)
             rgloc=$(echo "$rgjson" | jq '.location')
-            # echo for debugging
-            echo "$rgid"
-            echo "$rgloc"
+ 
             # create the Service Principal
             spn_name=$resource_group_name"-spn"
             spjson=$(az ad sp create-for-rbac --name $spn_name --role Contributor --scopes $rgid --sdk-auth)
             
-            # get the clientId and
-            #clientId=$(echo "$spjson" | jq '.appId' -r)
-            #clientSecret=$(echo "$spjson" | jq '.password' -r)
-            
-            # echo for debugging
-            # echo "$clientId"
-            # echo "$clientSecret"
             
             echo $spjson
             v1=$(echo "$spjson" | tr -d '\n\t')
             v2=$(echo $v1 | openssl base64 -A)
-            v3=$(echo "$v2" | base64 -d)
-            echo $v2
-            echo $v3
+ 
             az keyvault secret set -n $spn_name --vault-name "kv-projectgene"  --value "$v2"
             gitkv=$(az keyvault secret show --name $spn_name --vault-name "kv-projectgene" --query value)
             githubjson=$(echo "$gitkv" | tr -d '\"'| base64 -d)
   
             # echo $encodedJson
             echo "::set-output name=azure_credentials::$githubjson"
-            #az keyvault secret set -n $spn_name --vault-name kv-projectgene  --value "$githubjson" 
+
       - run: echo ${{ steps.azure.outputs.azure_credentials }}
       - name: Provision secret
         if: ${{ steps.repo_crud.outputs.new_repo_name }}
@@ -237,11 +222,11 @@ jobs:
             echo $spn_name;
             echo ${{ steps.repo_crud.outputs.found_repo_name}}
             
-            gitkv=$(az keyvault secret show --name $spn_name --vault-name "kv-tesrg" --query value)
+            gitkv=$(az keyvault secret show --name $spn_name --vault-name "kv-projectgene" --query value)
             spnjson=$(echo "$gitkv" | tr -d '\"'| base64 -d)
             
             # retrive the spn from Azure keyvault
-            echo "$spjson"
+            #echo "$spjson"
             spn=$(echo "$spjson" | jq '.value' -r | jq '.clientId' -r)
  
             # clean up - remove spn, resource group and the Keyvault Secret
