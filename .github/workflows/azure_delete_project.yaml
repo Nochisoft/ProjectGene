@@ -23,10 +23,12 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            gitkv=$(az keyvault secret show --name "$spn_name" --vault-name "kv-tesrg" --query value)
+            # retrive the spn from Azure keyvault
+            spn_name=${{ env.resource_group_name }}-spn
+            gitkv=$(az keyvault secret show --name $spn_name --vault-name "kv-tesrg" --query value)
             gitkvjson=$(echo "$gitkv" | tr -d '\"'| base64 -d)
 
-            # retrive the spn from Azure keyvault
+            # retrive the spn id from the Keyvault JSON
             #echo "$spjson"
             spn=$(echo "$gitkvjson" | jq '.value' -r | jq '.clientId' -r)
             #echo $spn
@@ -37,5 +39,4 @@ jobs:
             
             az ad sp delete --id $spn
             
-            spn_name=${{ env.resource_group_name }}"-spn"
             az keyvault secret delete --name "$spn_name" --vault-name "kv-tesrg"
