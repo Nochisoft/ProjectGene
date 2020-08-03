@@ -25,7 +25,7 @@ jobs:
         with:
           inlineScript: |
             spn_name='${{ env.project_name }}-spn'
-            spjson=$(az keyvault secret show -n $spn_name --vault-name kv-projectgene)
+            spjson=$(az keyvault secret show -n $spn_name --vault-name kv-tesrg)
 
             # retrive the spn from Azure keyvault
             echo "$spjson"
@@ -34,4 +34,4 @@ jobs:
             # clean up - remove spn, resource group and the Keyvault Secret
             az group delete --name ${{env.resource_group_name }} --yes 
             az ad sp delete --id "$spn"
-            az keyvault secret delete -n $spn_name --vault-name kv-projectgene
+            az keyvault secret delete -n $spn_name --vault-name kv-tesrg
