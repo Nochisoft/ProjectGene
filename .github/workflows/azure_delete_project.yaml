@@ -30,7 +30,7 @@ jobs:
 
             # retrive the spn id from the Keyvault JSON
             #echo "$spjson"
-            spn=$(echo "$gitkvjson" | jq '.value' -r | jq '.clientId' -r)
+            spn=$(echo "$gitkvjson" | jq '.clientId' -r)
             #echo $spn
  
             # clean up - remove spn, resource group and the Keyvault Secret
