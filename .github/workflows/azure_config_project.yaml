@@ -57,7 +57,7 @@ jobs:
             echo "$rgloc"
 
             # create the Service Principal
-            spn_name='${{ env.project_name }}spn'
+            spn_name='${{ env.project_name }}-spn'
             spjson=$(az ad sp create-for-rbac --name $spn_name --role Contributor --scopes $rgid  --sdk-auth)
             
 
@@ -82,9 +82,11 @@ jobs:
             echo $gitkvfin
             echo "::set-env name=projectspn::$gitkvfin"
             
-        # push the spn details to the project as AZURE_CREDENTIALS
-      - name: save the spn 
-        run: echo ${{ env.projectspn }} > spn.txt
+
+      #- name: save the spn 
+      #  run: echo ${{ env.projectspn }} > spn.txt
+        
+      # push the spn details to the project as AZURE_CREDENTIALS
       - name: Provision secret
         uses: pierluigi/repository-secret-javascript-action@main
         with:
