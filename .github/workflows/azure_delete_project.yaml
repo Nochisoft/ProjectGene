@@ -24,7 +24,7 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            gitkv=$(az keyvault secret show -n $spn_name --vault-name "kv-tesrg")
+            gitkv=$(az keyvault secret show -n $spn_name --vault-name kv-tesrg --query value)
             gitkvjson=$(echo "$gitkv" | tr -d '\"'| base64 -d)
 
             # retrive the spn from Azure keyvault
