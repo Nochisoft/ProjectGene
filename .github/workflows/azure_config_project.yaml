@@ -82,7 +82,7 @@ jobs:
             gitkvfin=$(echo "$gitkv" | tr -d '\"'| base64 -d)
             
             echo $gitkvfin
-            echo "::set-env name=projectspn::$gitkv"
+            echo "::set-env name=projectspn::$gitkvfin"
         # push the spn details to the project as AZURE_CREDENTIALS
       - name: save the spn 
         run: echo ${{ env.projectspn }} > spn.txt
