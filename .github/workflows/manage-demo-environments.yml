@@ -237,7 +237,9 @@ jobs:
             echo $spn_name;
             echo ${{ steps.repo_crud.outputs.found_repo_name}}
             
-            spjson=$(az keyvault secret show -n $spn_name --vault-name kv-projectgene)
+            gitkv=$(az keyvault secret show --name $spn_name --vault-name "kv-tesrg" --query value)
+            spnjson=$(echo "$gitkv" | tr -d '\"'| base64 -d)
+            
             # retrive the spn from Azure keyvault
             echo "$spjson"
             spn=$(echo "$spjson" | jq '.value' -r | jq '.clientId' -r)
