@@ -25,11 +25,12 @@ jobs:
         with:
           inlineScript: |
             spn_name='${{ env.project_name }}-spn'
-            spjson=$(az keyvault secret show -n $spn_name --vault-name kv-tesrg)
+            gitkv=$(az keyvault secret show -n $spn_name --vault-name kv-tesrg)
+            gitkvfin=$(echo "$gitkv" | tr -d '\"'| base64 -d)
 
             # retrive the spn from Azure keyvault
-            echo "$spjson"
-            spn=$(echo "$spjson" | jq '.value' -r | jq '.clientId' -r)
+            #echo "$spjson"
+            spn=$(echo "$gitkvjson" | jq '.value' -r | jq '.clientId' -r)
  
             # clean up - remove spn, resource group and the Keyvault Secret
             az group delete --name ${{env.resource_group_name }} --yes 
