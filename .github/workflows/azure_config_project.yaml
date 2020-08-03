@@ -77,7 +77,7 @@ jobs:
             v3=$(echo "$v2" | base64 -d)
             echo $v2
             echo $v3
-            az keyvault secret set -n "$spn_name" --vault-name "kv-projectgene" --value "$v2"
+            az keyvault secret set -n "$spn_name" --vault-name kv-testrg  --value "$v2"
             gitkv=$(az keyvault secret show --name $spn_name --vault-name kv-testrg --query value)
             gitkvfin=$(echo "$gitkv" | tr -d '\"'| base64 -d)
             
