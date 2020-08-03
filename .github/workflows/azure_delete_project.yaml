@@ -9,7 +9,7 @@ jobs:
     name: Delete Azure Resource Group and SPN
     runs-on: ubuntu-latest
     env:
-      resource_group_name: "test-rg" 
+      resource_group_name: "test-azure-access" 
       project_name:  "test-azure-access"
 
     steps:
