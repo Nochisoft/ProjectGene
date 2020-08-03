@@ -189,11 +189,11 @@ jobs:
             # echo "$subscriptionId"
             # echo "$tenantId"
             # get the resource group id (remove the quotes - raw) and location
-            #rgid=$(echo "$rgjson" | jq '.id' -r)
-            #rgloc=$(echo "$rgjson" | jq '.location')
+            rgid=$(echo "$rgjson" | jq '.id' -r)
+            rgloc=$(echo "$rgjson" | jq '.location')
             # echo for debugging
-            # echo "$rgid"
-            # echo "$rgloc"
+            echo "$rgid"
+            echo "$rgloc"
             # create the Service Principal
             spn_name=$resource_group_name"-spn"
             spjson=$(az ad sp create-for-rbac --name $spn_name --role Contributor --scopes $rgid --sdk-auth)
