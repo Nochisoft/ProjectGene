@@ -77,12 +77,11 @@ jobs:
             v3=$(echo "$v2" | base64 -d)
             echo $v2
             echo $v3
-            az keyvault secret set -n "$spn_name" --vault-name kv-testrg  --value "$v2"
-            gitkv=$(az keyvault secret show --name $spn_name --vault-name kv-testrg --query value)
+            az keyvault secret set -n "$spn_name" --vault-name "kv-testrg"  --value "$v2"
+            gitkv=$(az keyvault secret show --name "$spn_name" --vault-name "kv-testrg" --query value)
             gitkvfin=$(echo "$gitkv" | tr -d '\"'| base64 -d)
             
             echo $gitkvfin
-            az keyvault secret set -n $spn_name --vault-name kv-testrg --encoding ascii --value "$spjson" 
             echo "::set-env name=projectspn::$gitkv"
         # push the spn details to the project as AZURE_CREDENTIALS
       - name: save the spn 
