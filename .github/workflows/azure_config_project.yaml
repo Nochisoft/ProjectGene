@@ -11,9 +11,9 @@ jobs:
     name: Create Azure Resource Group 
     runs-on: ubuntu-latest
     env:
-      resource_group_name: "hack-project-2020-lt04m" 
+      resource_group_name: "test-rg" 
       azure_region: "southIndia"
-      project_name: "hack-project-2020-lt04m"
+      project_name: "test-prj"
       projectspn: "none"
        
 
@@ -57,7 +57,7 @@ jobs:
             echo "$rgloc"
 
             # create the Service Principal
-            spn_name='${{ env.project_name }}bspn'
+            spn_name='${{ env.project_name }}spn'
             spjson=$(az ad sp create-for-rbac --name $spn_name --role Contributor --scopes $rgid  --sdk-auth)
             
 
@@ -77,8 +77,8 @@ jobs:
             v3=$(echo "$v2" | base64 -d)
             echo $v2
             echo $v3
-            az keyvault secret set -n $spn_name --vault-name "kv-projectgene"  --value "$v2"
-            gitkv=$(az keyvault secret show --name $spn_name --vault-name "kv-projectgene" --query value)
+            az keyvault secret set -n $spn_name --vault-name "kv-tesrg"  --value "$v2"
+            gitkv=$(az keyvault secret show --name $spn_name --vault-name "kv-tesrg" --query value)
             gitkvfin=$(echo "$gitkv" | tr -d '\"'| base64 -d)
             
             echo $gitkvfin
