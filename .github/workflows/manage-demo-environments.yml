@@ -213,7 +213,7 @@ jobs:
             echo $v2
             echo $v3
             az keyvault secret set -n $spn_name --vault-name "kv-projectgene"  --value "$v2"
-            gitkv=$(az keyvault secret show --name $spn_name --vault-name "kv-projectgene --query value)
+            gitkv=$(az keyvault secret show --name $spn_name --vault-name "kv-projectgene" --query value)
             githubjson=$(echo "$gitkv" | tr -d '\"'| base64 -d)
   
             # echo $encodedJson
