@@ -13,7 +13,7 @@ jobs:
     env:
       resource_group_name: "test-rg" 
       azure_region: "southIndia"
-      project_name: "test-prj"
+      project_name: "test-azure-access"
       projectspn: "none"
        
 
