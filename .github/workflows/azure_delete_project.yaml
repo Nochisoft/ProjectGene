@@ -20,19 +20,23 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: Create Azure ResourceGroup
+      - name: Delete Azure Resources
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            spn_name='${{ env.project_name }}-spn'
-            gitkv=$(az keyvault secret show -n $spn_name --vault-name kv-tesrg)
+            gitkv=$(az keyvault secret show -n $spn_name --vault-name "kv-tesrg")
             gitkvjson=$(echo "$gitkv" | tr -d '\"'| base64 -d)
 
             # retrive the spn from Azure keyvault
-            #echo "$spjson"
+            echo "$spjson"
             spn=$(echo "$gitkvjson" | jq '.value' -r | jq '.clientId' -r)
+            echo $spn
  
             # clean up - remove spn, resource group and the Keyvault Secret
+            
             az group delete --name ${{env.resource_group_name }} --yes 
-            az ad sp delete --id "$spn"
+            
+            az ad sp delete --id $spn
+            
+            spn_name='${{ env.project_name }}-spn'
             az keyvault secret delete -n $spn_name --vault-name "kv-tesrg"
