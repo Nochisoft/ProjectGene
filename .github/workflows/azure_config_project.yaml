@@ -70,19 +70,18 @@ jobs:
             #echo "$clientSecret"
                                  
             # push the spn to Azure keyvault
-            echo $spjson
+            #echo $spjson
             v1=$(echo "$spjson" | tr -d '\n\t')
             v2=$(echo $v1 | openssl base64 -A)
-            #v2=$(echo "$v1" | base64 -w0)
-            v3=$(echo "$v2" | base64 -d)
-            echo $v2
-            echo $v3
+
             az keyvault secret set -n $spn_name --vault-name "kv-tesrg"  --value "$v2"
             gitkv=$(az keyvault secret show --name $spn_name --vault-name "kv-tesrg" --query value)
             gitkvfin=$(echo "$gitkv" | tr -d '\"'| base64 -d)
             
+            # Update the environment variable for spn
             echo $gitkvfin
             echo "::set-env name=projectspn::$gitkvfin"
+            
         # push the spn details to the project as AZURE_CREDENTIALS
       - name: save the spn 
         run: echo ${{ env.projectspn }} > spn.txt
@@ -90,7 +89,7 @@ jobs:
         uses: pierluigi/repository-secret-javascript-action@main
         with:
           github-token: ${{ secrets.ORG_SECRETS_PAT }}
-          repository: 'Nochisoft/hack-project-2020-lt04m'
+          repository: 'Nochisoft/test-azure-access'
           secret-name: AZURE_CREDENTIALS
           secret-value: ${{ env.projectspn }}           
 
