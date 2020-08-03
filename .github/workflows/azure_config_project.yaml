@@ -86,13 +86,11 @@ jobs:
         # push the spn details to the project as AZURE_CREDENTIALS
       - name: save the spn 
         run: echo ${{ env.projectspn }} > spn.txt
-      - name: show the file 
-        run: cat spn.txt
       - name: Provision secret
         uses: pierluigi/repository-secret-javascript-action@main
         with:
           github-token: ${{ secrets.ORG_SECRETS_PAT }}
           repository: 'Nochisoft/hack-project-2020-lt04m'
           secret-name: AZURE_CREDENTIALS
-          secret-value: echo ${{ env.projectspn }}            
+          secret-value: echo "${{ env.projectspn }}"            
 
