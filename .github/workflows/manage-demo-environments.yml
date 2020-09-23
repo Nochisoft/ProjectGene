@@ -14,7 +14,7 @@ on:
 env:
   COL_TODO: 'To do'
   COL_INPG: 'In Progress'
-  COL_DONE: 'Created'
+  COL_DONE: 'Deleted'
   ORG_NAME: ${{ github.repository_owner }}
 
 jobs:
