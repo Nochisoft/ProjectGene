@@ -1,4 +1,4 @@
-# ProjectGene
+# ProjectGenie
 
 ### Overview
 
