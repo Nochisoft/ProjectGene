@@ -1,5 +1,8 @@
 # ProjectGenie
 
+![logo](https://raw.githubusercontent.com/Nochisoft/ProjectGene/master/projectgenie.png)
+
+
 ### Overview
 
 This project is to illustrate how GitHub can be used for the administration of GitHub e.g. to create projects, to create repositories, to enables access to Azure, etc.
